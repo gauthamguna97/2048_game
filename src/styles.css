@@ -8,14 +8,11 @@ table tr td {
 }
 
 table {
-  width: 150px;
-  height: 150px;
+  width: 250px;
+  height: 250px;
   border-collapse: collapse;
-  padding-top: 100px;
-}
-
-td {
-  background-color: aqua;
+  background-color: red;
+  table-layout: fixed;
 }
 
 .startGame {
