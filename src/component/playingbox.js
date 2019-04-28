@@ -14,7 +14,17 @@ export default class Game extends React.Component {
     };
     this.randomRow = "";
     this.randomColumn = "";
-    this.color = ["white", "blue", "orange", "pink"];
+    this.color = [
+      "white",
+      "Yellow",
+      "GreenYellow",
+      "Orange",
+      "IndianRed",
+      "Blue",
+      "Indigo",
+      "Brown",
+      "Black"
+    ];
     this.marktable = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
     this.randrow = [];
   }
@@ -40,13 +50,20 @@ export default class Game extends React.Component {
       let _next = next;
       if (row[i + 1] === row[i] && row[i + 1] !== 0 && next) {
         _row[i + 1] = 2 * row[i];
-        _row[i] = 0;
+        if (i - 1 >= 0) {
+          for (var j = i; j > 0; j--) {
+            _row[j] = _row[j - 1];
+          }
+          _row[0] = 0;
+        } else {
+          _row[i] = 0;
+        }
         _next = false;
       } else if (row[i + 1] === 0) {
         _row[i + 1] = row[i];
         if (i - 1 >= 0) {
           for (var j = i; j > 0; j--) {
-            _row[j] = row[j - 1];
+            _row[j] = _row[j - 1];
           }
           _row[0] = 0;
         } else {
@@ -63,13 +80,20 @@ export default class Game extends React.Component {
       let _next = next;
       if (row[i - 1] === row[i] && row[i - 1] !== 0 && next) {
         _row[i - 1] = 2 * row[i];
-        _row[i] = 0;
+        if (i + 1 <= row.length - 1) {
+          for (var j = i; j < row.length - 1; j++) {
+            _row[j] = _row[j + 1];
+          }
+          _row[row.length - 1] = 0;
+        } else {
+          _row[i] = 0;
+        }
         _next = false;
       } else if (row[i - 1] === 0) {
         _row[i - 1] = row[i];
         if (i + 1 <= row.length - 1) {
           for (var j = i; j < row.length - 1; j++) {
-            _row[j] = row[j + 1];
+            _row[j] = _row[j + 1];
           }
           _row[row.length - 1] = 0;
         } else {
@@ -154,7 +178,11 @@ export default class Game extends React.Component {
                   <td
                     id={`${index}0${_index}`}
                     style={{
-                      backgroundColor: this.color[_item / 2],
+                      backgroundColor: this.color[
+                        Math.log(_item) / Math.log(2) < 1
+                          ? 0
+                          : Math.log(_item) / Math.log(2)
+                      ],
                       color: "white"
                     }}
                   >
