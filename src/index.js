@@ -4,14 +4,31 @@ import Game from "./component/playingbox.js";
 
 import "./styles.css";
 
-function App() {
-  return (
-    <div className="App">
-      <h1>Hello CodeSandbox</h1>
-      <h2>2048</h2>
-      <Game />
-    </div>
-  );
+class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      start: false
+    };
+  }
+
+  setstart() {
+    this.setState({
+      start: true
+    });
+  }
+  render() {
+    const { start } = this.state;
+    return (
+      <div className="App">
+        <h1>2048</h1>
+        <div className="startGame" onClick={() => this.setstart()} id="start">
+          Start
+        </div>
+        <Game start={start} />
+      </div>
+    );
+  }
 }
 
 const rootElement = document.getElementById("root");

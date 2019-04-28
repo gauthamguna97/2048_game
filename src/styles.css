@@ -2,3 +2,28 @@
   font-family: sans-serif;
   text-align: center;
 }
+
+table tr td {
+  border: 0.05px solid red;
+}
+
+table {
+  width: 150px;
+  height: 150px;
+  border-collapse: collapse;
+  padding-top: 100px;
+}
+
+td {
+  background-color: aqua;
+}
+
+.startGame {
+  background-color: red;
+  color: white;
+  width: 75px;
+  height: 50px;
+  display: block;
+  line-height: 50px;
+  border-radius: 25px;
+}
