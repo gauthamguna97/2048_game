@@ -4,7 +4,7 @@
 }
 
 table tr td {
-  border: 0.05px solid red;
+  border: 5px solid grey;
 }
 
 table {
@@ -13,6 +13,8 @@ table {
   border-collapse: collapse;
   background-color: red;
   table-layout: fixed;
+  font-weight: 1000px;
+  font-size: 25px;
 }
 
 .startGame {
