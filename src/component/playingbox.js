@@ -10,7 +10,8 @@ export default class Game extends React.Component {
         { txt: "Up" },
         { txt: "Down" }
       ],
-      tableList: [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+      tableList: [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+      GameOver: false
     };
     this.randomRow = "";
     this.randomColumn = "";
@@ -25,8 +26,8 @@ export default class Game extends React.Component {
       "Brown",
       "Black"
     ];
-    this.marktable = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
     this.randrow = [];
+    this.change = false;
   }
 
   componentWillReceiveProps(np) {
@@ -59,6 +60,7 @@ export default class Game extends React.Component {
           _row[i] = 0;
         }
         _next = false;
+        this.change = true;
       } else if (row[i + 1] === 0) {
         _row[i + 1] = row[i];
         if (i - 1 >= 0) {
@@ -69,6 +71,7 @@ export default class Game extends React.Component {
         } else {
           _row[i] = 0;
         }
+        this.change = true;
       }
       this.calculatenewRowRight(_row, i + 1, _next);
     }
@@ -88,6 +91,7 @@ export default class Game extends React.Component {
         } else {
           _row[i] = 0;
         }
+        this.change = true;
         _next = false;
       } else if (row[i - 1] === 0) {
         _row[i - 1] = row[i];
@@ -99,6 +103,7 @@ export default class Game extends React.Component {
         } else {
           _row[i] = 0;
         }
+        this.change = true;
       }
       this.calculatenewRow(_row, i - 1, _next);
     }
@@ -117,6 +122,23 @@ export default class Game extends React.Component {
       }
     }
     return newArray;
+  }
+
+  checkisGameOver(array) {
+    array.forEach((item, index) => {
+      item.forEach((_item, _index) => {
+        if (_item === 0) {
+          return false;
+        } else if (_index + 1 < array.length && item[_index + 1] === _item) {
+          return false;
+        } else if (
+          index + 1 < array.length &&
+          array[index + 1][index] === _item
+        ) {
+          return false;
+        }
+      });
+    });
   }
 
   settable(button) {
@@ -144,55 +166,67 @@ export default class Game extends React.Component {
       }
       newList = this.transpose(newList);
     }
-    newList.forEach((item, index) => {
-      item.forEach((_item, _index) => {
-        if (_item === 0) {
-          this.randrow.push(_index * 10 + index);
-        }
+
+    if (this.change) {
+      newList.forEach((item, index) => {
+        item.forEach((_item, _index) => {
+          if (_item === 0) {
+            this.randrow.push(_index * 10 + index);
+          }
+        });
       });
-    });
-    const number = Math.ceil(Math.random() * this.randrow.length);
-    const tablerc = this.randrow[number - 1];
-    console.log("tblerc", tablerc, this.randrow);
-    this.randrow = [];
-    newList[tablerc % 10][Math.floor(tablerc / 10)] = 2;
-    console.log(tableList);
-    this.setState({
-      tableList: newList
-    });
+      const number = Math.ceil(Math.random() * this.randrow.length);
+      const tablerc = this.randrow[number - 1];
+      console.log("tblerc", tablerc, this.randrow);
+      this.randrow = [];
+      newList[tablerc % 10][Math.floor(tablerc / 10)] = 2;
+      console.log(tableList);
+      this.setState({
+        tableList: newList
+      });
+      this.change = false;
+    }
+    if (this.checkisGameOver(newList)) {
+      this.setState({
+        GameOver: true
+      });
+    }
   }
   render() {
-    const { buttonList, tableList } = this.state;
+    const { buttonList, tableList, GameOver } = this.state;
     return (
       <div>
-        {buttonList.map(item => (
-          <button id={item.txt} onClick={() => this.settable(item.txt)}>
-            {item.txt}
-          </button>
-        ))}
-        {
-          <table align="center">
-            {tableList.map((item, index) => (
-              <tr>
-                {item.map((_item, _index) => (
-                  <td
-                    id={`${index}0${_index}`}
-                    style={{
-                      backgroundColor: this.color[
-                        Math.log(_item) / Math.log(2) < 1
-                          ? 0
-                          : Math.log(_item) / Math.log(2)
-                      ],
-                      color: "white"
-                    }}
-                  >
-                    {_item}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </table>
-        }
+        <div className="GameOver">{GameOver && <div>Game Over</div>}</div>
+        <div className="Game">
+          {buttonList.map(item => (
+            <button id={item.txt} onClick={() => this.settable(item.txt)}>
+              {item.txt}
+            </button>
+          ))}
+          {
+            <table align="center">
+              {tableList.map((item, index) => (
+                <tr>
+                  {item.map((_item, _index) => (
+                    <td
+                      id={`${index}0${_index}`}
+                      style={{
+                        backgroundColor: this.color[
+                          Math.log(_item) / Math.log(2) < 1
+                            ? 0
+                            : Math.log(_item) / Math.log(2)
+                        ],
+                        color: "white"
+                      }}
+                    >
+                      {_item}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </table>
+          }
+        </div>
       </div>
     );
   }
