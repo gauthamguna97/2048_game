@@ -11,8 +11,8 @@ table {
   width: 250px;
   height: 250px;
   border-collapse: collapse;
-  background-color: red;
   table-layout: fixed;
+  background-color: aqua;
   font-weight: 1000px;
   font-size: 25px;
 }

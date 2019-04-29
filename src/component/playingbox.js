@@ -30,13 +30,51 @@ export default class Game extends React.Component {
     this.change = false;
   }
 
+  componentDidMount() {
+    const { start, length } = this.props;
+    if (start && length) {
+      let { tableList } = this.state;
+      if (length === 3) {
+        tableList = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+      } else if (length === 4) {
+        tableList = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+      } else if (length === 5) {
+        tableList = [
+          [0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0]
+        ];
+      }
+      this.randomRow = Math.ceil(Math.random() * length);
+      this.randomColumn = Math.ceil(Math.random() * length);
+      tableList[this.randomRow - 1][this.randomColumn - 1] = 2;
+      console.log(tableList, this.randomRow, this.randomColumn);
+      this.setState({
+        tableList
+      });
+    }
+  }
   componentWillReceiveProps(np) {
-    console.log(np);
+    console.log("np", np);
     if (np.start && np.length) {
+      let { tableList } = this.state;
+      if (np.length === 3) {
+        tableList = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+      } else if (np.length === 4) {
+        tableList = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+      } else if (np.length === 5) {
+        tableList = [
+          [0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0]
+        ];
+      }
       this.randomRow = Math.ceil(Math.random() * np.length);
       this.randomColumn = Math.ceil(Math.random() * np.length);
-      let { tableList } = this.state;
-      tableList = new Array(`${np.length}`);
       tableList[this.randomRow - 1][this.randomColumn - 1] = 2;
       console.log(tableList, this.randomRow, this.randomColumn);
       this.setState({
@@ -149,7 +187,11 @@ export default class Game extends React.Component {
     console.log(tableList, button);
     if (button === "Left") {
       for (var i = 0; i < tableList.length; i++) {
-        newList[i] = this.calculatenewRow(tableList[i], newList.length, true);
+        newList[i] = this.calculatenewRow(
+          tableList[i],
+          tableList.length - 1,
+          true
+        );
       }
     } else if (button === "Right") {
       for (var i = 0; i < tableList.length; i++) {
@@ -158,7 +200,11 @@ export default class Game extends React.Component {
     } else if (button === "Up") {
       tableList = this.transpose(tableList);
       for (var i = 0; i < tableList.length; i++) {
-        newList[i] = this.calculatenewRow(tableList[i], newList.length, true);
+        newList[i] = this.calculatenewRow(
+          tableList[i],
+          tableList.length - 1,
+          true
+        );
       }
       newList = this.transpose(newList);
     } else {

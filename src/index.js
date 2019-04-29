@@ -20,8 +20,8 @@ class App extends React.Component {
 
   setstart(item) {
     this.setState({
-      start: true,
-      length: item.length
+      length: item.length,
+      start: true
     });
   }
   render() {
@@ -35,12 +35,13 @@ class App extends React.Component {
               className="startGame"
               onClick={() => this.setstart(item)}
               id="start"
+              style={{ display: "table-cell" }}
             >
               {item.id}
             </div>
           ))}
         </div>
-        {start && <Game start={start} length={length} />}
+        {start && length && <Game start={start} length={length} />}
       </div>
     );
   }
