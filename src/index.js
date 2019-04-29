@@ -8,24 +8,39 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      start: false
+      start: false,
+      type: [
+        { id: "3 x 3", length: 3 },
+        { id: "4 x 4", length: 4 },
+        { id: "5 x 5", length: 5 }
+      ],
+      length: 0
     };
   }
 
-  setstart() {
+  setstart(item) {
     this.setState({
-      start: true
+      start: true,
+      length: item.length
     });
   }
   render() {
-    const { start } = this.state;
+    const { start, type, length } = this.state;
     return (
       <div className="App">
         <h1>2048</h1>
-        <div className="startGame" onClick={() => this.setstart()} id="start">
-          Start
+        <div style={{ display: "table" }}>
+          {type.map(item => (
+            <div
+              className="startGame"
+              onClick={() => this.setstart(item)}
+              id="start"
+            >
+              {item.id}
+            </div>
+          ))}
         </div>
-        <Game start={start} />
+        {start && <Game start={start} length={length} />}
       </div>
     );
   }

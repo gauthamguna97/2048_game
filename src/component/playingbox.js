@@ -10,7 +10,7 @@ export default class Game extends React.Component {
         { txt: "Up" },
         { txt: "Down" }
       ],
-      tableList: [[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+      tableList: [],
       GameOver: false
     };
     this.randomRow = "";
@@ -32,11 +32,11 @@ export default class Game extends React.Component {
 
   componentWillReceiveProps(np) {
     console.log(np);
-    if (np.start) {
-      this.randomRow = Math.ceil(Math.random() * 3);
-      this.randomColumn = Math.ceil(Math.random() * 3);
+    if (np.start && np.length) {
+      this.randomRow = Math.ceil(Math.random() * np.length);
+      this.randomColumn = Math.ceil(Math.random() * np.length);
       let { tableList } = this.state;
-      tableList = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+      tableList = new Array(`${np.length}`);
       tableList[this.randomRow - 1][this.randomColumn - 1] = 2;
       console.log(tableList, this.randomRow, this.randomColumn);
       this.setState({
@@ -125,7 +125,8 @@ export default class Game extends React.Component {
   }
 
   checkisGameOver(array) {
-    array.forEach((item, index) => {
+    let isGameOver = true;
+    isGameOver = array.forEach((item, index) => {
       item.forEach((_item, _index) => {
         if (_item === 0) {
           return false;
@@ -139,6 +140,7 @@ export default class Game extends React.Component {
         }
       });
     });
+    return isGameOver;
   }
 
   settable(button) {
@@ -147,7 +149,7 @@ export default class Game extends React.Component {
     console.log(tableList, button);
     if (button === "Left") {
       for (var i = 0; i < tableList.length; i++) {
-        newList[i] = this.calculatenewRow(tableList[i], 2, true);
+        newList[i] = this.calculatenewRow(tableList[i], newList.length, true);
       }
     } else if (button === "Right") {
       for (var i = 0; i < tableList.length; i++) {
@@ -156,7 +158,7 @@ export default class Game extends React.Component {
     } else if (button === "Up") {
       tableList = this.transpose(tableList);
       for (var i = 0; i < tableList.length; i++) {
-        newList[i] = this.calculatenewRow(tableList[i], 2, true);
+        newList[i] = this.calculatenewRow(tableList[i], newList.length, true);
       }
       newList = this.transpose(newList);
     } else {
