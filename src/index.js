@@ -27,7 +27,7 @@ class App extends React.Component {
   render() {
     const { start, type, length } = this.state;
     return (
-      <div className="App">
+      <div className="App" id="GameArena">
         <h1>2048</h1>
         <div style={{ display: "table" }}>
           {type.map(item => (

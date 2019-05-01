@@ -4,12 +4,6 @@ export default class Game extends React.Component {
   constructor() {
     super();
     this.state = {
-      buttonList: [
-        { txt: "Left" },
-        { txt: "Right" },
-        { txt: "Up" },
-        { txt: "Down" }
-      ],
       tableList: [],
       GameOver: false
     };
@@ -28,6 +22,12 @@ export default class Game extends React.Component {
     ];
     this.randrow = [];
     this.change = false;
+    this.Game = "";
+    this.final_X = "";
+    this.final_Y = "";
+    this.eventData = {};
+    this.minDist = 150;
+    this.findDirection = this.findDirection.bind(this);
   }
 
   componentDidMount() {
@@ -51,10 +51,67 @@ export default class Game extends React.Component {
       this.randomColumn = Math.ceil(Math.random() * length);
       tableList[this.randomRow - 1][this.randomColumn - 1] = 2;
       console.log(tableList, this.randomRow, this.randomColumn);
-      this.setState({
-        tableList
-      });
+      this.setState(
+        {
+          tableList
+        },
+        () => {
+          this.Game = document.getElementById("GameArena");
+          this.Game.addEventListener(
+            "touchstart",
+            event => {
+              event.preventDefault();
+              console.log(event);
+              this.eventData = event.changedTouches[0];
+              this.startX = this.eventData.pageX;
+              this.startY = this.eventData.pageY;
+            },
+            false
+          );
+          this.Game.addEventListener(
+            "touchend",
+            event => {
+              event.preventDefault();
+              console.log(event);
+              this.eventData = event.changedTouches[0];
+              this.finalX = Math.abs(this.eventData.pageX - this.startX);
+              this.finalY = Math.abs(this.eventData.pageY - this.startY);
+              this.final_X = this.eventData.pageX - this.startX;
+              this.final_Y = this.eventData.pageY - this.startY;
+              console.log(
+                "event",
+                this.finalX,
+                this.finalY,
+                this.final_X,
+                this.final_Y
+              );
+              this.findDirection();
+            },
+            false
+          );
+        }
+      );
     }
+  }
+
+  findDirection() {
+    console.log("finding direction", this.finalX, this.finalY);
+    let dir = "none";
+    if (this.finalX > this.finalY) {
+      if (this.final_X < 0) {
+        dir = "Left";
+      } else {
+        dir = "Right";
+      }
+    } else if (this.finalX < this.finalY) {
+      if (this.final_Y < 0) {
+        dir = "Up";
+      } else {
+        dir = "Down";
+      }
+    }
+    console.log("dir", dir);
+    this.settable(dir);
   }
   componentWillReceiveProps(np) {
     console.log("np", np);
@@ -82,6 +139,7 @@ export default class Game extends React.Component {
       });
     }
   }
+
   calculatenewRowRight(row, i, next) {
     if (i !== row.length - 1) {
       console.log("row", row, i, next);
@@ -115,6 +173,7 @@ export default class Game extends React.Component {
     }
     return row;
   }
+
   calculatenewRow(row, i, next) {
     if (i !== 0) {
       let _row = row;
@@ -241,16 +300,11 @@ export default class Game extends React.Component {
     }
   }
   render() {
-    const { buttonList, tableList, GameOver } = this.state;
+    const { tableList, GameOver } = this.state;
     return (
       <div>
         <div className="GameOver">{GameOver && <div>Game Over</div>}</div>
         <div className="Game">
-          {buttonList.map(item => (
-            <button id={item.txt} onClick={() => this.settable(item.txt)}>
-              {item.txt}
-            </button>
-          ))}
           {
             <table align="center">
               {tableList.map((item, index) => (
