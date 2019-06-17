@@ -27,17 +27,25 @@ class App extends React.Component {
   render() {
     const { start, type, length } = this.state;
     return (
-      <div className="App" id="GameArena">
+      <div className="App">
         <h1>2048</h1>
-        <div style={{ display: "table" }}>
+        <div style={{ display: "table", paddingBottom: "50px" }}>
           {type.map(item => (
             <div
               className="startGame"
               onClick={() => this.setstart(item)}
               id="start"
-              style={{ display: "table-cell" }}
+              style={{ display: "table-cell", marginRight: "10px" }}
             >
-              {item.id}
+              <div
+                style={{
+                  width: "80%",
+                  backgroundColor: "yellow",
+                  borderRadius: "20px"
+                }}
+              >
+                {item.id}
+              </div>
             </div>
           ))}
         </div>

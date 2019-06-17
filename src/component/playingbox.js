@@ -28,6 +28,8 @@ export default class Game extends React.Component {
     this.eventData = {};
     this.minDist = 150;
     this.findDirection = this.findDirection.bind(this);
+    this.finaltime = "";
+    this.starttime = "";
   }
 
   componentDidMount() {
@@ -65,6 +67,7 @@ export default class Game extends React.Component {
               this.eventData = event.changedTouches[0];
               this.startX = this.eventData.pageX;
               this.startY = this.eventData.pageY;
+              this.starttime = new Date().getTime();
             },
             false
           );
@@ -78,12 +81,15 @@ export default class Game extends React.Component {
               this.finalY = Math.abs(this.eventData.pageY - this.startY);
               this.final_X = this.eventData.pageX - this.startX;
               this.final_Y = this.eventData.pageY - this.startY;
+              this.finaltime = new Date().getTime() - this.starttime;
               console.log(
                 "event",
                 this.finalX,
                 this.finalY,
                 this.final_X,
-                this.final_Y
+                this.final_Y,
+                this.starttime,
+                this.finaltime
               );
               this.findDirection();
             },
@@ -97,20 +103,22 @@ export default class Game extends React.Component {
   findDirection() {
     console.log("finding direction", this.finalX, this.finalY);
     let dir = "none";
+    if (this.finaltime > 1000) return;
     if (this.finalX > this.finalY) {
-      if (this.final_X < 0) {
+      if (this.final_X < 0 && Math.abs(this.finalX) > 20) {
         dir = "Left";
-      } else {
+      } else if (Math.abs(this.finalX) > 20) {
         dir = "Right";
       }
     } else if (this.finalX < this.finalY) {
-      if (this.final_Y < 0) {
+      if (this.final_Y < 0 && Math.abs(this.finalY) > 20) {
         dir = "Up";
-      } else {
+      } else if (Math.abs(this.finalY) > 20) {
         dir = "Down";
       }
     }
     console.log("dir", dir);
+    if (dir === "none") return;
     this.settable(dir);
   }
   componentWillReceiveProps(np) {
@@ -145,7 +153,12 @@ export default class Game extends React.Component {
       console.log("row", row, i, next);
       let _row = row;
       let _next = next;
-      if (row[i + 1] === row[i] && row[i + 1] !== 0 && next && !(i+2 < row.length && row[i+2] === row[i])) {
+      if (
+        row[i + 1] === row[i] &&
+        row[i + 1] !== 0 &&
+        next &&
+        !(i + 2 < row.length && row[i + 2] === row[i])
+      ) {
         _row[i + 1] = 2 * row[i];
         if (i - 1 >= 0) {
           for (var j = i; j > 0; j--) {
@@ -157,16 +170,16 @@ export default class Game extends React.Component {
         }
         _next = false;
         this.change = true;
-        console.log('this.isChange', this.change);
+        console.log("this.isChange", this.change);
       } else if (row[i + 1] === 0) {
         _row[i + 1] = row[i];
-        if(row[i] !== 0) {
+        if (row[i] !== 0) {
           this.change = true;
         }
         if (i - 1 >= 0) {
           for (var j = i; j > 0; j--) {
             _row[j] = _row[j - 1];
-            if(_row[j] !== 0) {
+            if (_row[j] !== 0) {
               this.change = true;
             }
           }
@@ -184,7 +197,12 @@ export default class Game extends React.Component {
     if (i !== 0) {
       let _row = row;
       let _next = next;
-      if (row[i - 1] === row[i] && row[i - 1] !== 0 && next && !(i-2 >= 0 && row[i] === row[i-2])) {
+      if (
+        row[i - 1] === row[i] &&
+        row[i - 1] !== 0 &&
+        next &&
+        !(i - 2 >= 0 && row[i] === row[i - 2])
+      ) {
         _row[i - 1] = 2 * row[i];
         if (i + 1 <= row.length - 1) {
           for (var j = i; j < row.length - 1; j++) {
@@ -195,17 +213,17 @@ export default class Game extends React.Component {
           _row[i] = 0;
         }
         this.change = true;
-        console.log('this.isChange', this.change);
+        console.log("this.isChange", this.change);
         _next = false;
       } else if (row[i - 1] === 0) {
         _row[i - 1] = row[i];
-        if(row[i] !== 0) {
+        if (row[i] !== 0) {
           this.change = true;
         }
         if (i + 1 <= row.length - 1) {
           for (var j = i; j < row.length - 1; j++) {
             _row[j] = _row[j + 1];
-            if(_row[j]) {
+            if (_row[j]) {
               this.change = true;
             }
           }
@@ -213,7 +231,7 @@ export default class Game extends React.Component {
         } else {
           _row[i] = 0;
         }
-        console.log('this.isChange', this.change);
+        console.log("this.isChange", this.change);
       }
       this.calculatenewRow(_row, i - 1, _next);
     }
@@ -235,13 +253,13 @@ export default class Game extends React.Component {
   }
 
   checkisGameOver(array) {
-    for(var a=0 ; a <array.length ; a++) {
-      for(var b=0; b < array.length; b++) {
-        if(array[a][b] === 0) {
+    for (var a = 0; a < array.length; a++) {
+      for (var b = 0; b < array.length; b++) {
+        if (array[a][b] === 0) {
           return false;
-        } else if(b+1 < array.length && array[a][b+1] === array[a][b]) {
+        } else if (b + 1 < array.length && array[a][b + 1] === array[a][b]) {
           return false;
-        } else if(a+1 < array.length && array[a+1][b] === array[a][b]) {
+        } else if (a + 1 < array.length && array[a + 1][b] === array[a][b]) {
           return false;
         }
       }
@@ -302,7 +320,7 @@ export default class Game extends React.Component {
       });
       this.change = false;
     }
-    console.log('this.isGameOver', this.isGameOver);
+    console.log("this.isGameOver", this.isGameOver);
     if (this.checkisGameOver(newList)) {
       this.setState({
         GameOver: true
@@ -313,7 +331,7 @@ export default class Game extends React.Component {
     const { tableList, GameOver } = this.state;
     return (
       <div>
-        <div className="GameOver" >{GameOver && <div>Game Over</div>}</div>
+        <div className="GameOver">{GameOver && <div>Game Over</div>}</div>
         <div className="Game" id="GameArena">
           {
             <table align="center">
